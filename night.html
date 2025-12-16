@@ -2,50 +2,92 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>読み込み中…</title>
+<title>……</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body {
-    margin:0; background:black; color:white;
-    display:flex; justify-content:center; align-items:center;
-    height:100vh; font-family: sans-serif;
-  }
-  #msg { font-size:18px; opacity:0.6; }
-  #scare, #reveal { display:none; }
-  img { width:100vw; height:100vh; object-fit:cover; }
+body {
+  margin:0;
+  background:black;
+  color:red;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family: monospace;
+  overflow:hidden;
+}
+#text {
+  font-size:22px;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink {
+  0%,50%,100% { opacity:1; }
+  25%,75% { opacity:0; }
+}
+.shake {
+  animation: shake 0.1s infinite;
+}
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(5px, -5px); }
+  50% { transform: translate(-5px, 5px); }
+  75% { transform: translate(5px, 5px); }
+  100% { transform: translate(0); }
+}
+.flash {
+  background:red !important;
+}
+img {
+  width:100vw;
+  height:100vh;
+  object-fit:cover;
+}
 </style>
 </head>
 <body>
 
-<div id="msg">読み込み中… 少々お待ちください</div>
+<div id="text">読み込み中…</div>
 
-<div id="scare">
-  <img src="https://i.imgur.com/8Km9tLL.jpg">
-  <audio id="sfx">
-    <source src="https://www.soundjay.com/human/sounds/scream-01.mp3" type="audio/mpeg">
-  </audio>
-</div>
-
-<div id="reveal" style="text-align:center;">
-  <h1>ドッキリでした👻</h1>
-  <p>心臓大丈夫？ごめんね笑</p>
-</div>
+<audio id="sfx">
+  <source src="https://www.soundjay.com/human/sounds/scream-01.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-  // 5秒静寂
-  setTimeout(() => {
-    document.getElementById("msg").style.display = "none";
-    document.getElementById("scare").style.display = "block";
-    const sfx = document.getElementById("sfx");
-    sfx.volume = 0.6;
-    sfx.play();
-  }, 5000);
+let count = 5;
+const text = document.getElementById("text");
 
-  // 3秒後にネタばらし
-  setTimeout(() => {
-    document.getElementById("scare").style.display = "none";
-    document.getElementById("reveal").style.display = "block";
-  }, 8000);
+const timer = setInterval(() => {
+  text.textContent = count + "…";
+  count--;
+  if (count < 0) clearInterval(timer);
+}, 1000);
+
+setTimeout(() => {
+  document.body.classList.add("shake");
+}, 4500);
+
+setTimeout(() => {
+  document.body.classList.add("flash");
+}, 5200);
+
+setTimeout(() => {
+  document.body.innerHTML = `
+    <img src="https://i.imgur.com/8Km9tLL.jpg">
+  `;
+  const sfx = document.getElementById("sfx");
+  sfx.volume = 0.6;
+  sfx.play();
+}, 5500);
+
+setTimeout(() => {
+  document.body.className = "";
+  document.body.innerHTML = `
+    <div style="color:white; text-align:center;">
+      <h1>ドッキリでした👻</h1>
+      <p>心臓生きてる？笑</p>
+    </div>
+  `;
+}, 9000);
 </script>
 
 </body>
